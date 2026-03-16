@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: fullstock-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fullstock
+    username: fullstock
+    password: fullstock123
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+server:
+  port: 8080
