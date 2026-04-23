@@ -1,16 +1,19 @@
-version: "3.9"
-
 services:
   postgres:
     image: postgres:16
     container_name: fullstock-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: fullstock
-      POSTGRES_USER: fullstock
-      POSTGRES_PASSWORD: fullstock123
+      POSTGRES_DB: ${FULLSTOCK_DB_NAME:-fullstock}
+      POSTGRES_USER: ${FULLSTOCK_DB_USER:-fullstock}
+      POSTGRES_PASSWORD: ${FULLSTOCK_DB_PASSWORD:-fullstock123}
     ports:
-      - "5432:5432"
+      - "${FULLSTOCK_DB_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${FULLSTOCK_DB_USER:-fullstock} -d ${FULLSTOCK_DB_NAME:-fullstock}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     volumes:
       - fullstock_data:/var/lib/postgresql/data
 

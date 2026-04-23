@@ -46,4 +46,25 @@ public class Product {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        createdAt = now;
+        updatedAt = now;
+        if (active == null) {
+            active = Boolean.TRUE;
+        }
+        if (currentQuantity == null) {
+            currentQuantity = BigDecimal.ZERO;
+        }
+        if (minimumQuantity == null) {
+            minimumQuantity = BigDecimal.ZERO;
+        }
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

@@ -48,4 +48,14 @@ public class StockMovement {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (movementDate == null) {
+            movementDate = createdAt;
+        }
+    }
 }

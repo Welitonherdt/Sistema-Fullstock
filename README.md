@@ -1,111 +1,68 @@
-# FullStock - Projeto Base Inicial
+# FullStock
 
-Este pacote é um **projeto base** para validar o caminho técnico do FullStock antes do desenvolvimento completo.
+Sistema de controle de estoque com:
+- autenticacao JWT
+- perfis de acesso (`ADMIN`, `ALMOXARIFE`, `USUARIO`)
+- gestao de usuarios
+- gestao de produtos
+- movimentacoes de entrada/saida
+- consulta e pesquisa de estoque
+- relatorios de estoque com exportacao em `CSV`, `XML` e `PDF`
 
-## Objetivo
-Criar um sistema web de controle de estoque com foco em:
-- autenticação por perfis;
-- cadastro de usuários;
-- cadastro de produtos/materiais;
-- entradas e saídas de estoque;
-- consulta de saldo atual;
-- alertas de estoque crítico;
-- relatórios básicos.
+## Estrutura
 
-## Estrutura do pacote
 ```text
 fullstock-base-starter/
-├── backend/     -> base Spring Boot + PostgreSQL + Flyway
-├── frontend/    -> base React + Vite + TypeScript
-├── docs/        -> backlog, regras de negócio, endpoints e modelagem
-├── docker-compose.yml
-└── README.md
+|-- backend/   # Spring Boot + JPA + Security + Flyway
+|-- frontend/  # React + Vite + TypeScript + Tailwind
+|-- docs/
+|   |-- endpoints.md
+|   `-- guia-instalacao.md
+|-- docker-compose.yml
+`-- .env.example
 ```
 
-## O que já vem pronto
-- Estrutura de pastas sugerida
-- Migrações SQL iniciais
-- Entidades-base do domínio
-- Endpoints-base documentados
-- Front-end com navegação inicial
-- Layout administrativo simples
-- Dados de exemplo para visualizar o fluxo
+## Banco via Docker (padrao do projeto)
 
-## O que ainda está como TODO
-- JWT completo
-- Persistência real dos cadastros no front
-- Integração real do front com a API
-- Relatórios exportáveis
-- Auditoria completa
-- Notificações
+O projeto esta preparado para rodar o PostgreSQL via Docker Compose.
 
-## Stack sugerida
-### Front-end
-- React
-- Vite
-- TypeScript
-- Tailwind CSS
-- React Router
+Porta padrao no host: `5433` (evita conflito com PostgreSQL local na `5432`).
 
-### Back-end
-- Java 17
-- Spring Boot
-- Spring Web
-- Spring Data JPA
-- Spring Security
-- Flyway
-- PostgreSQL
-
-## Como usar este pacote
-1. Abra a pasta no VS Code ou IntelliJ.
-2. Leia primeiro a pasta `docs/`.
-3. Rode o PostgreSQL com Docker:
+1. Na raiz do projeto, copie o arquivo de ambiente:
    ```bash
-   docker compose up -d
+   copy .env.example .env
    ```
-4. Suba o backend:
+2. Suba o banco:
    ```bash
-   cd backend
-   ./mvnw spring-boot:run
+   docker compose up -d postgres
    ```
-   ou, se estiver no Windows e sem wrapper:
+3. Confira se o container esta ativo:
    ```bash
-   mvn spring-boot:run
-   ```
-5. Suba o frontend:
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
+   docker compose ps
    ```
 
-## Usuários sugeridos para teste visual
-Esses dados estão apenas documentados para orientar o fluxo:
-- ADMIN -> admin@fullstock.local
-- ALMOXARIFE -> almox@fullstock.local
-- USUARIO -> usuario@fullstock.local
+## Como rodar a aplicacao
 
-## Próximo passo recomendado
-Se você sentir que esse caminho faz sentido, o ideal é evoluir este pacote em 3 frentes:
-1. fechar o modelo de dados final;
-2. implementar autenticação e autorização reais;
-3. integrar entradas/saídas com histórico completo de movimentação.
+1. Backend (na raiz do projeto):
+   ```bash
+   mvn -f backend/pom.xml spring-boot:run
+   ```
+2. Frontend (na raiz do projeto, em outro terminal):
+   ```bash
+   npm install --prefix frontend
+   npm run dev --prefix frontend
+   ```
 
+## Scripts uteis (raiz)
 
-## Como rodar no Windows
+```bash
+npm run db:up
+npm run db:status
+npm run db:logs
+npm run db:down
+npm run db:reset
+```
 
-### Frontend
-1. Abra o terminal dentro da pasta `fullstock-base-starter`
-2. Rode `npm run frontend:install`
-3. Rode `npm run frontend:dev`
+## Guia completo de ambiente
 
-Ou, se preferir, entre direto na pasta `frontend` e rode:
-- `npm install`
-- `npm run dev`
-
-### Backend
-1. Tenha Java 17+ e Maven instalados
-2. Configure o PostgreSQL
-3. Rode `mvn -f backend/pom.xml spring-boot:run`
-
-Observação: o arquivo `package.json` da raiz existe só para facilitar os comandos do frontend. O app React fica dentro de `frontend/` e o backend Spring Boot fica dentro de `backend/`.
+Consulte `docs/guia-instalacao.md` para o passo a passo completo no Windows.

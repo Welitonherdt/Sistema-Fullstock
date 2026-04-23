@@ -1,15 +1,19 @@
 # Frontend - FullStock
 
-Base visual em React + Vite + TypeScript + Tailwind.
+Aplicação React + Vite + TypeScript integrada ao backend.
 
-## Status
-Este front já serve para:
-- validar a navegação;
-- visualizar o layout;
-- testar o menu lateral;
-- ver como ficaria o fluxo principal do sistema.
+## Funcionalidades
 
-## Comandos
+- Login real com JWT
+- Controle visual por perfil
+- Usuários (admin)
+- Produtos (CRUD com permissões)
+- Movimentações de entrada/saída
+- Consulta e pesquisa no estoque
+- Relatórios com exportação CSV/XML/PDF
+
+## Executar
+
 ```bash
 npm install
 npm run dev

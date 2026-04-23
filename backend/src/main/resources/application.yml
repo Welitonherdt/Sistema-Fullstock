@@ -3,9 +3,9 @@ spring:
     name: fullstock-backend
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/fullstock
-    username: fullstock
-    password: fullstock123
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${FULLSTOCK_DB_HOST:localhost}:${FULLSTOCK_DB_PORT:5433}/${FULLSTOCK_DB_NAME:fullstock}}
+    username: ${SPRING_DATASOURCE_USERNAME:${FULLSTOCK_DB_USER:fullstock}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${FULLSTOCK_DB_PASSWORD:fullstock123}}
 
   jpa:
     hibernate:
@@ -21,3 +21,8 @@ spring:
 
 server:
   port: 8080
+
+app:
+  jwt:
+    secret: ${FULLSTOCK_JWT_SECRET:fullstock-dev-secret-change-this-with-at-least-32-characters}
+    expiration-hours: 12

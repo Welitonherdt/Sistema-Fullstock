@@ -1,10 +1,15 @@
-# Endpoints Base - FullStock
+# Endpoints da API - FullStock
+
+Base URL:
+
+`http://localhost:8080/api`
 
 ## Auth
-### POST /api/auth/login
-Autentica o usuário e retorna token + papel.
 
-#### Exemplo de request
+### `POST /auth/login`
+Autentica o usuário e retorna token JWT.
+
+Request:
 ```json
 {
   "email": "admin@fullstock.local",
@@ -12,37 +17,51 @@ Autentica o usuário e retorna token + papel.
 }
 ```
 
-#### Exemplo de response
+Response:
 ```json
 {
-  "token": "mock-jwt-token",
+  "token": "jwt-token",
+  "userId": 1,
   "name": "Administrador",
+  "email": "admin@fullstock.local",
   "role": "ADMIN"
 }
 ```
 
-## Usuários
-- `GET /api/users`
-- `POST /api/users`
-- `PUT /api/users/{id}`
-- `PATCH /api/users/{id}/status`
+## Usuários (ADMIN)
+
+- `GET /users`
+- `GET /users/{id}`
+- `POST /users`
+- `PUT /users/{id}`
+- `PATCH /users/{id}/status`
 
 ## Produtos
-- `GET /api/products`
-- `GET /api/products/{id}`
-- `POST /api/products`
-- `PUT /api/products/{id}`
-- `PATCH /api/products/{id}/status`
+
+- `GET /products?search=&active=&critical=`
+- `GET /products/{id}`
+- `POST /products` (ADMIN, ALMOXARIFE)
+- `PUT /products/{id}` (ADMIN, ALMOXARIFE)
+- `PATCH /products/{id}/status` (ADMIN, ALMOXARIFE)
+- `DELETE /products/{id}` (ADMIN, ALMOXARIFE)
 
 ## Movimentações
-- `GET /api/movements`
-- `POST /api/movements/entry`
-- `POST /api/movements/exit`
+
+- `GET /movements?type=&productId=&startDate=&endDate=`
+- `POST /movements/entry` (ADMIN, ALMOXARIFE)
+- `POST /movements/exit` (ADMIN, ALMOXARIFE)
 
 ## Estoque
-- `GET /api/inventory`
-- `GET /api/inventory/critical`
+
+- `GET /inventory?search=&criticalOnly=&includeInactive=`
+- `GET /inventory/critical`
+
+## Dashboard
+
+- `GET /dashboard/summary`
 
 ## Relatórios
-- `GET /api/reports/movements`
-- `GET /api/reports/critical-stock`
+
+- `GET /reports/stock?search=&criticalOnly=&includeInactive=`
+- `GET /reports/stock/export?format=csv|xml|pdf&search=&criticalOnly=&includeInactive=`
+- `GET /reports/critical-stock`

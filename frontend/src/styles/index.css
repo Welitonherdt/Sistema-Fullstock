@@ -1,6 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --app-bg: #f3f7fb;
+  --app-bg-soft: #e9f2ff;
+  --app-ink: #10233b;
+  --app-muted: #4f647c;
+  --app-card: rgba(255, 255, 255, 0.78);
+  --app-card-border: rgba(148, 177, 210, 0.35);
+  --app-glow: rgba(24, 148, 255, 0.16);
+}
 
 html,
 body,
@@ -9,5 +21,36 @@ body,
 }
 
 body {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Manrope", "Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: var(--app-ink);
+  background:
+    radial-gradient(circle at 10% 0%, var(--app-bg-soft) 0%, transparent 32%),
+    radial-gradient(circle at 100% 100%, rgba(130, 204, 255, 0.26) 0%, transparent 30%),
+    linear-gradient(160deg, #f7fbff 0%, var(--app-bg) 60%, #eef4fb 100%);
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Sora", "Manrope", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #99acc3 transparent;
+}
+
+*::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #b2c2d4;
+  border-radius: 999px;
+}
+
+::selection {
+  background: var(--app-glow);
 }

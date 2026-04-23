@@ -9,12 +9,33 @@ import InventoryPage from "./pages/InventoryPage";
 import ReportsPage from "./pages/ReportsPage";
 import AppLayout from "./components/layout/AppLayout";
 
+function RoleRoute({
+  allowedRoles,
+  children
+}: {
+  allowedRoles: Array<"ADMIN" | "ALMOXARIFE" | "USUARIO">;
+  children: React.ReactNode;
+}) {
+  const { role } = useAuth();
+  if (!role || !allowedRoles.includes(role)) {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+}
+
 function ProtectedArea() {
   return (
     <AppLayout>
       <Routes>
         <Route path="/" element={<DashboardPage />} />
-        <Route path="/users" element={<UsersPage />} />
+        <Route
+          path="/users"
+          element={
+            <RoleRoute allowedRoles={["ADMIN"]}>
+              <UsersPage />
+            </RoleRoute>
+          }
+        />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/movements" element={<MovementsPage />} />
         <Route path="/inventory" element={<InventoryPage />} />
