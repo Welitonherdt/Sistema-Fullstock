@@ -24,6 +24,9 @@ export type Product = {
   name: string;
   description: string | null;
   category: string | null;
+  locationId: number;
+  locationCode: string;
+  locationName: string;
   unitMeasure: string;
   currentQuantity: number;
   minimumQuantity: number;
@@ -33,7 +36,7 @@ export type Product = {
   updatedAt: string;
 };
 
-export type MovementType = "ENTRY" | "EXIT";
+export type MovementType = "ENTRY" | "EXIT" | "LOAN";
 
 export type Movement = {
   id: number;
@@ -45,6 +48,7 @@ export type Movement = {
   movementDate: string;
   supplier: string | null;
   destination: string | null;
+  borrowerName: string | null;
   notes: string | null;
   createdById: number;
   createdByName: string;
@@ -56,6 +60,9 @@ export type InventoryItem = {
   code: string;
   name: string;
   category: string | null;
+  locationId: number;
+  locationCode: string;
+  locationName: string;
   unitMeasure: string;
   currentQuantity: number;
   minimumQuantity: number;
@@ -67,6 +74,8 @@ export type StockReportItem = {
   code: string;
   name: string;
   category: string | null;
+  locationCode: string;
+  locationName: string;
   unitMeasure: string;
   currentQuantity: number;
   minimumQuantity: number;
@@ -80,6 +89,16 @@ export type DashboardSummary = {
   entriesToday: number;
   exitsToday: number;
   recentMovements: Movement[];
+};
+
+export type Location = {
+  id: number;
+  code: string;
+  name: string;
+  description: string | null;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export class ApiError extends Error {
@@ -226,6 +245,7 @@ export async function createProduct(payload: {
   name: string;
   description?: string | null;
   category?: string | null;
+  locationId: number;
   unitMeasure: string;
   currentQuantity: number;
   minimumQuantity: number;
@@ -241,6 +261,7 @@ export async function updateProduct(
     name: string;
     description?: string | null;
     category?: string | null;
+    locationId: number;
     unitMeasure: string;
     currentQuantity: number;
     minimumQuantity: number;
@@ -256,6 +277,31 @@ export async function updateProductStatus(id: number, active: boolean) {
 
 export async function deleteProduct(id: number) {
   return request<{ message: string }>(`/products/${id}`, { method: "DELETE" });
+}
+
+export async function listLocations(params: { search?: string; active?: boolean } = {}) {
+  const query = toQueryString(params);
+  return request<Location[]>(`/locations${query}`);
+}
+
+export async function createLocation(payload: {
+  code: string;
+  name: string;
+  description?: string | null;
+  active?: boolean;
+}) {
+  return request<Location>("/locations", { method: "POST", body: payload });
+}
+
+export async function updateLocation(
+  id: number,
+  payload: { code: string; name: string; description?: string | null; active?: boolean }
+) {
+  return request<Location>(`/locations/${id}`, { method: "PUT", body: payload });
+}
+
+export async function updateLocationStatus(id: number, active: boolean) {
+  return request<Location>(`/locations/${id}/status`, { method: "PATCH", body: { active } });
 }
 
 export async function listMovements(params: {
@@ -284,6 +330,15 @@ export async function createExit(payload: {
   notes?: string;
 }) {
   return request<Movement>("/movements/exit", { method: "POST", body: payload });
+}
+
+export async function createLoan(payload: {
+  productId: number;
+  quantity: number;
+  borrowerName: string;
+  notes?: string;
+}) {
+  return request<Movement>("/movements/loan", { method: "POST", body: payload });
 }
 
 export async function listInventory(params: {

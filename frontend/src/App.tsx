@@ -3,6 +3,7 @@ import { useAuth } from "./contexts/AuthContext";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import UsersPage from "./pages/UsersPage";
+import LocationsPage from "./pages/LocationsPage";
 import ProductsPage from "./pages/ProductsPage";
 import MovementsPage from "./pages/MovementsPage";
 import InventoryPage from "./pages/InventoryPage";
@@ -36,6 +37,7 @@ function ProtectedArea() {
             </RoleRoute>
           }
         />
+        <Route path="/locations" element={<LocationsPage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/movements" element={<MovementsPage />} />
         <Route path="/inventory" element={<InventoryPage />} />

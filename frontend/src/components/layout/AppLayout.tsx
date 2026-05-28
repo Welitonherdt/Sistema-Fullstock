@@ -10,6 +10,7 @@ type NavItem = {
 const navItems: NavItem[] = [
   { to: "/", label: "Dashboard", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] },
   { to: "/users", label: "Usuarios", roles: ["ADMIN"] },
+  { to: "/locations", label: "Localizacoes", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] },
   { to: "/products", label: "Produtos", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] },
   { to: "/movements", label: "Movimentacoes", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] },
   { to: "/inventory", label: "Estoque", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] },

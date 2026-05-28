@@ -40,6 +40,9 @@ public class StockMovement {
 
     private String destination;
 
+    @Column(name = "borrower_name")
+    private String borrowerName;
+
     private String notes;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

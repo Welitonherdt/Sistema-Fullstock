@@ -49,4 +49,9 @@ public class MovementController {
     public ResponseEntity<MovementResponse> exit(@Valid @RequestBody MovementRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(movementService.registerExit(request));
     }
+
+    @PostMapping("/loan")
+    public ResponseEntity<MovementResponse> loan(@Valid @RequestBody MovementRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(movementService.registerLoan(request));
+    }
 }

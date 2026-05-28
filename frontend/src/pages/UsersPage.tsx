@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Modal from "../components/ui/Modal";
 import PageHeader from "../components/ui/PageHeader";
 import {
   ApiError,
@@ -30,6 +31,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [form, setForm] = useState<UserFormState>(initialForm);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -44,7 +46,7 @@ export default function UsersPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Não foi possível carregar os usuários.");
+        setError("Nao foi possivel carregar os usuarios.");
       }
     } finally {
       setLoading(false);
@@ -55,6 +57,12 @@ export default function UsersPage() {
     void loadUsers();
   }, []);
 
+  function startCreate() {
+    setEditingId(null);
+    setForm(initialForm);
+    setIsFormOpen(true);
+  }
+
   function startEdit(user: User) {
     setEditingId(user.id);
     setForm({
@@ -64,6 +72,13 @@ export default function UsersPage() {
       role: user.role,
       active: user.active
     });
+    setIsFormOpen(true);
+  }
+
+  function closeForm() {
+    setIsFormOpen(false);
+    setEditingId(null);
+    setForm(initialForm);
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -88,14 +103,14 @@ export default function UsersPage() {
           active: form.active
         });
       }
-      setForm(initialForm);
-      setEditingId(null);
+
+      closeForm();
       await loadUsers();
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Não foi possível salvar o usuário.");
+        setError("Nao foi possivel salvar o usuario.");
       }
     } finally {
       setSaving(false);
@@ -110,89 +125,94 @@ export default function UsersPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Não foi possível atualizar o status do usuário.");
+        setError("Nao foi possivel atualizar o status do usuario.");
       }
     }
   }
 
   return (
     <>
-      <PageHeader title="Usuários" subtitle="Gerencie contas de acesso e perfis do sistema." />
+      <PageHeader title="Usuarios" subtitle="Gerencie contas de acesso e perfis do sistema." />
 
       {error ? (
         <div className="mb-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div>
       ) : null}
 
-      <form onSubmit={handleSubmit} className="mb-6 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-        <h3 className="mb-4 text-lg font-bold text-slate-900">{editingId ? "Editar usuário" : "Novo usuário"}</h3>
-        <div className="grid gap-3 md:grid-cols-2">
-          <input
-            className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-            placeholder="Nome completo"
-            value={form.name}
-            onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-            required
-          />
-          <input
-            className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-            placeholder="E-mail"
-            type="email"
-            value={form.email}
-            onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
-            required
-          />
-          <input
-            className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-            placeholder={editingId ? "Senha (opcional para manter)" : "Senha"}
-            type="password"
-            value={form.password}
-            onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
-            required={!editingId}
-            minLength={6}
-          />
-          <select
-            className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-            value={form.role}
-            onChange={(event) => setForm((prev) => ({ ...prev, role: event.target.value as Role }))}
-          >
-            <option value="ADMIN">ADMIN</option>
-            <option value="ALMOXARIFE">ALMOXARIFE</option>
-            <option value="USUARIO">USUARIO</option>
-          </select>
-        </div>
+      <div className="mb-6 flex justify-end">
+        <button
+          type="button"
+          onClick={startCreate}
+          className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+        >
+          Novo cadastro
+        </button>
+      </div>
 
-        <label className="mt-3 inline-flex items-center gap-2 text-sm text-slate-700">
-          <input
-            type="checkbox"
-            checked={form.active}
-            onChange={(event) => setForm((prev) => ({ ...prev, active: event.target.checked }))}
-          />
-          Usuário ativo
-        </label>
+      <Modal open={isFormOpen} title={editingId ? "Editar usuario" : "Novo usuario"} onClose={closeForm}>
+        <form onSubmit={handleSubmit}>
+          <div className="grid gap-3 md:grid-cols-2">
+            <input
+              className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
+              placeholder="Nome completo"
+              value={form.name}
+              onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+              required
+            />
+            <input
+              className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
+              placeholder="E-mail"
+              type="email"
+              value={form.email}
+              onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
+              required
+            />
+            <input
+              className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
+              placeholder={editingId ? "Senha (opcional para manter)" : "Senha"}
+              type="password"
+              value={form.password}
+              onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
+              required={!editingId}
+              minLength={6}
+            />
+            <select
+              className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
+              value={form.role}
+              onChange={(event) => setForm((prev) => ({ ...prev, role: event.target.value as Role }))}
+            >
+              <option value="ADMIN">ADMIN</option>
+              <option value="ALMOXARIFE">ALMOXARIFE</option>
+              <option value="USUARIO">USUARIO</option>
+            </select>
+          </div>
 
-        <div className="mt-4 flex gap-3">
-          <button
-            type="submit"
-            disabled={saving}
-            className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-brand-300"
-          >
-            {saving ? "Salvando..." : editingId ? "Salvar alterações" : "Cadastrar usuário"}
-          </button>
+          <label className="mt-3 inline-flex items-center gap-2 text-sm text-slate-700">
+            <input
+              type="checkbox"
+              checked={form.active}
+              onChange={(event) => setForm((prev) => ({ ...prev, active: event.target.checked }))}
+            />
+            Usuario ativo
+          </label>
 
-          {editingId ? (
+          <div className="mt-4 flex gap-3">
+            <button
+              type="submit"
+              disabled={saving}
+              className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-brand-300"
+            >
+              {saving ? "Salvando..." : editingId ? "Salvar alteracoes" : "Cadastrar usuario"}
+            </button>
             <button
               type="button"
-              onClick={() => {
-                setEditingId(null);
-                setForm(initialForm);
-              }}
+              onClick={closeForm}
               className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
             >
-              Cancelar edição
+              Cancelar
             </button>
-          ) : null}
-        </div>
-      </form>
+          </div>
+        </form>
+      </Modal>
 
       <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
         <table className="min-w-full divide-y divide-slate-200">
@@ -202,20 +222,20 @@ export default function UsersPage() {
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">E-mail</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Perfil</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Ativo</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Ações</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Acoes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {loading ? (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-500">
-                  Carregando usuários...
+                  Carregando usuarios...
                 </td>
               </tr>
             ) : users.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-500">
-                  Nenhum usuário cadastrado.
+                  Nenhum usuario cadastrado.
                 </td>
               </tr>
             ) : (
@@ -224,7 +244,7 @@ export default function UsersPage() {
                   <td className="px-4 py-3 text-sm text-slate-700">{user.name}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{user.email}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{user.role}</td>
-                  <td className="px-4 py-3 text-sm text-slate-700">{user.active ? "Sim" : "Não"}</td>
+                  <td className="px-4 py-3 text-sm text-slate-700">{user.active ? "Sim" : "Nao"}</td>
                   <td className="px-4 py-3 text-sm">
                     <div className="flex flex-wrap gap-2">
                       <button

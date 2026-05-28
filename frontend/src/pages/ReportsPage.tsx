@@ -16,6 +16,8 @@ export default function ReportsPage() {
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState("");
 
+  const hasRows = rows.length > 0;
+
   async function loadReport() {
     setLoading(true);
     setError("");
@@ -30,7 +32,7 @@ export default function ReportsPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Não foi possível gerar a visualização do relatório.");
+        setError("Nao foi possivel gerar a visualizacao do relatorio.");
       }
     } finally {
       setLoading(false);
@@ -42,6 +44,10 @@ export default function ReportsPage() {
   }, [criticalOnly, includeInactive]);
 
   async function handleExport(format: "csv" | "xml" | "pdf") {
+    if (!hasRows) {
+      return;
+    }
+
     setExporting(true);
     setError("");
     try {
@@ -61,18 +67,20 @@ export default function ReportsPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Não foi possível exportar o relatório.");
+        setError("Nao foi possivel exportar o relatorio.");
       }
     } finally {
       setExporting(false);
     }
   }
 
+  const exportDisabled = exporting || !hasRows;
+
   return (
     <>
       <PageHeader
-        title="Relatórios de Estoque"
-        subtitle="Geração, visualização e exportação para impressão em CSV, XML e PDF."
+        title="Relatorios de Estoque"
+        subtitle="Geracao, visualizacao e exportacao para impressao em CSV, XML e PDF."
       />
 
       {error ? (
@@ -83,7 +91,7 @@ export default function ReportsPage() {
         <div className="flex flex-col gap-3 md:flex-row">
           <input
             className="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-            placeholder="Pesquisar por código, nome ou categoria"
+            placeholder="Pesquisar por codigo, nome ou categoria"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
@@ -92,7 +100,7 @@ export default function ReportsPage() {
             onClick={() => void loadReport()}
             type="button"
           >
-            Gerar visualização
+            Gerar visualizacao
           </button>
         </div>
 
@@ -103,7 +111,7 @@ export default function ReportsPage() {
               checked={criticalOnly}
               onChange={(event) => setCriticalOnly(event.target.checked)}
             />
-            Somente itens críticos
+            Somente itens criticos
           </label>
 
           <label className="inline-flex items-center gap-2 text-sm text-slate-700">
@@ -116,31 +124,44 @@ export default function ReportsPage() {
           </label>
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={() => void handleExport("csv")}
-            disabled={exporting}
-            className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            Exportar CSV
-          </button>
-          <button
-            type="button"
-            onClick={() => void handleExport("xml")}
-            disabled={exporting}
-            className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            Exportar XML
-          </button>
-          <button
-            type="button"
-            onClick={() => void handleExport("pdf")}
-            disabled={exporting}
-            className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-brand-300"
-          >
-            Exportar PDF
-          </button>
+        <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Exportacao para impressao</p>
+              <h3 className="mt-1 text-lg font-bold text-slate-900">Relatorio em PDF com destaque</h3>
+              <p className="mt-1 text-sm text-slate-600">
+                Use PDF para imprimir e CSV/XML para integracao. {hasRows ? `${rows.length} itens prontos.` : "Sem dados para exportar."}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => void handleExport("pdf")}
+              disabled={exportDisabled}
+              className="rounded-xl bg-gradient-to-r from-brand-700 to-brand-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-900/20 transition hover:brightness-105 disabled:cursor-not-allowed disabled:from-brand-300 disabled:to-brand-300 disabled:shadow-none"
+            >
+              {exporting ? "Exportando..." : "Exportar PDF"}
+            </button>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => void handleExport("csv")}
+              disabled={exportDisabled}
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              Exportar CSV
+            </button>
+            <button
+              type="button"
+              onClick={() => void handleExport("xml")}
+              disabled={exportDisabled}
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              Exportar XML
+            </button>
+          </div>
         </div>
       </div>
 
@@ -151,21 +172,21 @@ export default function ReportsPage() {
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Produto</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Categoria</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Saldo</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Mínimo</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Crítico</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Minimo</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Critico</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {loading ? (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-500">
-                  Gerando relatório...
+                  Gerando relatorio...
                 </td>
               </tr>
             ) : rows.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-500">
-                  Nenhum dado para o relatório.
+                  Nenhum dado para o relatorio.
                 </td>
               </tr>
             ) : (
@@ -177,7 +198,7 @@ export default function ReportsPage() {
                   <td className="px-4 py-3 text-sm text-slate-700">{row.category || "-"}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{row.currentQuantity}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{row.minimumQuantity}</td>
-                  <td className="px-4 py-3 text-sm text-slate-700">{row.critical ? "Sim" : "Não"}</td>
+                  <td className="px-4 py-3 text-sm text-slate-700">{row.critical ? "Sim" : "Nao"}</td>
                 </tr>
               ))
             )}

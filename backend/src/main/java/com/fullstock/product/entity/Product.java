@@ -1,5 +1,6 @@
 package com.fullstock.product.entity;
 
+import com.fullstock.location.entity.Location;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +29,10 @@ public class Product {
     private String description;
 
     private String category;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "location_id", nullable = false)
+    private Location location;
 
     @Column(name = "unit_measure", nullable = false)
     private String unitMeasure;

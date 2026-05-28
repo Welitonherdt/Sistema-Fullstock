@@ -31,8 +31,7 @@ export default function LoginPage() {
       <div className="pointer-events-none absolute -bottom-24 right-0 h-80 w-80 rounded-full bg-cyan-300/25 blur-3xl" />
 
       <div className="relative w-full max-w-md rounded-3xl border border-slate-200/80 bg-white/85 p-8 shadow-[0_30px_70px_-42px_rgba(12,38,67,0.62)] backdrop-blur-xl">
-        <p className="text-xs uppercase tracking-[0.32em] text-brand-600">FullStock</p>
-        <h1 className="mt-3 text-3xl font-bold text-slate-900">Entrar no sistema</h1>
+        <h1 className="text-3xl font-bold text-slate-900">Entrar no sistema</h1>
         <p className="mt-2 text-sm text-slate-600">Use os usuarios cadastrados no banco para acessar o sistema.</p>
 
         <div className="mt-8 space-y-4">

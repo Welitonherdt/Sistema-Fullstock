@@ -45,11 +45,20 @@ Response:
 - `PATCH /products/{id}/status` (ADMIN, ALMOXARIFE)
 - `DELETE /products/{id}` (ADMIN, ALMOXARIFE)
 
+## Localizacoes
+
+- `GET /locations?search=&active=`
+- `GET /locations/{id}`
+- `POST /locations` (ADMIN, ALMOXARIFE)
+- `PUT /locations/{id}` (ADMIN, ALMOXARIFE)
+- `PATCH /locations/{id}/status` (ADMIN, ALMOXARIFE)
+
 ## Movimentações
 
 - `GET /movements?type=&productId=&startDate=&endDate=`
 - `POST /movements/entry` (ADMIN, ALMOXARIFE)
 - `POST /movements/exit` (ADMIN, ALMOXARIFE)
+- `POST /movements/loan` (ADMIN, ALMOXARIFE)
 
 ## Estoque
 

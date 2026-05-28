@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
+import Modal from "../components/ui/Modal";
 import PageHeader from "../components/ui/PageHeader";
 import { useAuth } from "../contexts/AuthContext";
 import {
   ApiError,
   createProduct,
   deleteProduct,
+  listLocations,
   listProducts,
   updateProduct,
   updateProductStatus,
+  type Location,
   type Product
 } from "../services/api";
 
@@ -16,6 +19,7 @@ type ProductFormState = {
   name: string;
   description: string;
   category: string;
+  locationId: string;
   unitMeasure: string;
   currentQuantity: string;
   minimumQuantity: string;
@@ -27,6 +31,7 @@ const initialForm: ProductFormState = {
   name: "",
   description: "",
   category: "",
+  locationId: "",
   unitMeasure: "UN",
   currentQuantity: "0",
   minimumQuantity: "0",
@@ -38,10 +43,12 @@ export default function ProductsPage() {
   const canManage = role === "ADMIN" || role === "ALMOXARIFE";
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [form, setForm] = useState<ProductFormState>(initialForm);
   const [search, setSearch] = useState("");
   const [showInactive, setShowInactive] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -52,6 +59,15 @@ export default function ProductsPage() {
       return null;
     }
     return quantity;
+  }
+
+  async function loadLocations() {
+    try {
+      const response = await listLocations({ active: true });
+      setLocations(response);
+    } catch {
+      setLocations([]);
+    }
   }
 
   async function loadProducts() {
@@ -78,6 +94,16 @@ export default function ProductsPage() {
     void loadProducts();
   }, [showInactive]);
 
+  useEffect(() => {
+    void loadLocations();
+  }, []);
+
+  function openCreatePopup() {
+    setEditingId(null);
+    setForm(initialForm);
+    setIsFormOpen(true);
+  }
+
   function startEdit(product: Product) {
     setEditingId(product.id);
     setForm({
@@ -85,11 +111,19 @@ export default function ProductsPage() {
       name: product.name,
       description: product.description ?? "",
       category: product.category ?? "",
+      locationId: String(product.locationId),
       unitMeasure: product.unitMeasure,
       currentQuantity: String(product.currentQuantity),
       minimumQuantity: String(product.minimumQuantity),
       active: product.active
     });
+    setIsFormOpen(true);
+  }
+
+  function closeForm() {
+    setIsFormOpen(false);
+    setEditingId(null);
+    setForm(initialForm);
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -100,8 +134,13 @@ export default function ProductsPage() {
 
     const currentQuantity = parseNonNegativeInteger(form.currentQuantity);
     const minimumQuantity = parseNonNegativeInteger(form.minimumQuantity);
+    const locationId = Number(form.locationId);
     if (currentQuantity === null || minimumQuantity === null) {
       setError("Saldo e quantidade minima devem ser numeros inteiros (sem quebrados).");
+      return;
+    }
+    if (!Number.isInteger(locationId) || locationId <= 0) {
+      setError("Selecione uma localizacao valida para o produto.");
       return;
     }
 
@@ -113,6 +152,7 @@ export default function ProductsPage() {
         name: form.name,
         description: form.description || null,
         category: form.category || null,
+        locationId,
         unitMeasure: form.unitMeasure,
         currentQuantity,
         minimumQuantity,
@@ -125,8 +165,7 @@ export default function ProductsPage() {
         await createProduct(payload);
       }
 
-      setEditingId(null);
-      setForm(initialForm);
+      closeForm();
       await loadProducts();
     } catch (err) {
       if (err instanceof ApiError) {
@@ -186,7 +225,7 @@ export default function ProductsPage() {
         <div className="flex flex-col gap-3 md:flex-row">
           <input
             className="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-            placeholder="Pesquisar por codigo, nome ou categoria"
+            placeholder="Pesquisar por codigo, nome, categoria ou local"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
@@ -199,23 +238,39 @@ export default function ProductsPage() {
           </button>
         </div>
 
-        <label className="mt-3 inline-flex items-center gap-2 text-sm text-slate-700">
-          <input
-            type="checkbox"
-            checked={showInactive}
-            onChange={(event) => setShowInactive(event.target.checked)}
-          />
-          Mostrar produtos inativos
-        </label>
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+            <input
+              type="checkbox"
+              checked={showInactive}
+              onChange={(event) => setShowInactive(event.target.checked)}
+            />
+            Mostrar produtos inativos
+          </label>
+
+          {canManage ? (
+            <button
+              type="button"
+              onClick={openCreatePopup}
+              className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+            >
+              Novo cadastro
+            </button>
+          ) : null}
+        </div>
       </div>
 
-      {canManage ? (
-        <form onSubmit={handleSubmit} className="mb-6 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-          <h3 className="mb-4 text-lg font-bold text-slate-900">{editingId ? "Editar produto" : "Novo produto"}</h3>
+      {!canManage ? (
+        <div className="mb-6 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-800">
+          Seu perfil esta em modo visualizacao para produtos.
+        </div>
+      ) : null}
+
+      <Modal open={isFormOpen} title={editingId ? "Editar produto" : "Novo produto"} onClose={closeForm}>
+        <form onSubmit={handleSubmit}>
           <div className="grid gap-3 md:grid-cols-2">
             <label className="flex flex-col gap-1">
               <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Codigo</span>
-              <span className="text-xs text-slate-500">Identificador unico do produto.</span>
               <input
                 className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
                 placeholder="Ex.: PAR-002"
@@ -227,7 +282,6 @@ export default function ProductsPage() {
 
             <label className="flex flex-col gap-1">
               <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nome</span>
-              <span className="text-xs text-slate-500">Nome principal exibido no estoque e relatorios.</span>
               <input
                 className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
                 placeholder="Ex.: Parafuso 10mm"
@@ -239,7 +293,6 @@ export default function ProductsPage() {
 
             <label className="flex flex-col gap-1">
               <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Categoria</span>
-              <span className="text-xs text-slate-500">Agrupamento para facilitar busca e filtro.</span>
               <input
                 className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
                 placeholder="Ex.: Fixacao"
@@ -249,8 +302,24 @@ export default function ProductsPage() {
             </label>
 
             <label className="flex flex-col gap-1">
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Localizacao</span>
+              <select
+                className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
+                value={form.locationId}
+                onChange={(event) => setForm((prev) => ({ ...prev, locationId: event.target.value }))}
+                required
+              >
+                <option value="">Selecione uma localizacao</option>
+                {locations.map((location) => (
+                  <option key={location.id} value={location.id}>
+                    {location.code} - {location.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="flex flex-col gap-1">
               <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Unidade</span>
-              <span className="text-xs text-slate-500">Formato de contagem (UN, CX, PAR etc.).</span>
               <input
                 className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
                 placeholder="Ex.: UN"
@@ -262,10 +331,8 @@ export default function ProductsPage() {
 
             <label className="flex flex-col gap-1">
               <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Quantidade Atual</span>
-              <span className="text-xs text-slate-500">Saldo atual disponivel em estoque (somente inteiro).</span>
               <input
                 className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-                placeholder="Ex.: 120"
                 value={form.currentQuantity}
                 onChange={(event) => setForm((prev) => ({ ...prev, currentQuantity: event.target.value }))}
                 type="number"
@@ -278,10 +345,8 @@ export default function ProductsPage() {
 
             <label className="flex flex-col gap-1">
               <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Quantidade Minima</span>
-              <span className="text-xs text-slate-500">Limite minimo de pecas antes de ficar critico.</span>
               <input
                 className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-                placeholder="Ex.: 50"
                 value={form.minimumQuantity}
                 onChange={(event) => setForm((prev) => ({ ...prev, minimumQuantity: event.target.value }))}
                 type="number"
@@ -295,7 +360,6 @@ export default function ProductsPage() {
 
           <label className="mt-3 flex flex-col gap-1">
             <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Descricao</span>
-            <span className="text-xs text-slate-500">Detalhes tecnicos ou observacoes do item (opcional).</span>
             <textarea
               className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
               placeholder="Descricao do produto (opcional)"
@@ -322,25 +386,16 @@ export default function ProductsPage() {
             >
               {saving ? "Salvando..." : editingId ? "Salvar alteracoes" : "Cadastrar produto"}
             </button>
-            {editingId ? (
-              <button
-                type="button"
-                className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
-                onClick={() => {
-                  setEditingId(null);
-                  setForm(initialForm);
-                }}
-              >
-                Cancelar edicao
-              </button>
-            ) : null}
+            <button
+              type="button"
+              className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+              onClick={closeForm}
+            >
+              Cancelar
+            </button>
           </div>
         </form>
-      ) : (
-        <div className="mb-6 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-800">
-          Seu perfil esta em modo visualizacao para produtos.
-        </div>
-      )}
+      </Modal>
 
       <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
         <table className="min-w-full divide-y divide-slate-200">
@@ -349,6 +404,7 @@ export default function ProductsPage() {
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Codigo</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nome</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Categoria</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Localizacao</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Saldo</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Minimo</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
@@ -358,13 +414,13 @@ export default function ProductsPage() {
           <tbody className="divide-y divide-slate-100">
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-sm text-slate-500">
+                <td colSpan={8} className="px-4 py-8 text-center text-sm text-slate-500">
                   Carregando produtos...
                 </td>
               </tr>
             ) : products.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-sm text-slate-500">
+                <td colSpan={8} className="px-4 py-8 text-center text-sm text-slate-500">
                   Nenhum produto encontrado.
                 </td>
               </tr>
@@ -374,6 +430,7 @@ export default function ProductsPage() {
                   <td className="px-4 py-3 text-sm text-slate-700">{product.code}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{product.name}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{product.category || "-"}</td>
+                  <td className="px-4 py-3 text-sm text-slate-700">{product.locationCode} - {product.locationName}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{product.currentQuantity}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{product.minimumQuantity}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">
