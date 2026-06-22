@@ -44,7 +44,13 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/login").permitAll()
+                .requestMatchers("/api/health").permitAll()
                 .requestMatchers("/error").permitAll()
+                .requestMatchers(
+                    "/", "/index.html", "/assets/**", "/favicon.ico",
+                    "/login", "/users", "/locations", "/products",
+                    "/movements", "/inventory", "/reports"
+                ).permitAll()
 
                 .requestMatchers("/api/users/**").hasRole("ADMIN")
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import Modal from "../components/ui/Modal";
 import PageHeader from "../components/ui/PageHeader";
 import {
@@ -46,7 +46,7 @@ export default function UsersPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel carregar os usuarios.");
+        setError("Não foi possível carregar os usuários.");
       }
     } finally {
       setLoading(false);
@@ -110,7 +110,7 @@ export default function UsersPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel salvar o usuario.");
+        setError("Não foi possível salvar o usuário.");
       }
     } finally {
       setSaving(false);
@@ -125,14 +125,14 @@ export default function UsersPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel atualizar o status do usuario.");
+        setError("Não foi possível atualizar o status do usuário.");
       }
     }
   }
 
   return (
     <>
-      <PageHeader title="Usuarios" subtitle="Gerencie contas de acesso e perfis do sistema." />
+      <PageHeader title="Usuários" subtitle="Gerencie contas de acesso e perfis do sistema." />
 
       {error ? (
         <div className="mb-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div>
@@ -148,7 +148,14 @@ export default function UsersPage() {
         </button>
       </div>
 
-      <Modal open={isFormOpen} title={editingId ? "Editar usuario" : "Novo usuario"} onClose={closeForm}>
+      <Modal
+        open={isFormOpen}
+        title={editingId ? "Editar usuário" : "Novo usuário"}
+        onClose={closeForm}
+        closeOnEscape={false}
+        closeOnBackdropClick={false}
+        showHeaderCloseButton={false}
+      >
         <form onSubmit={handleSubmit}>
           <div className="grid gap-3 md:grid-cols-2">
             <input
@@ -192,7 +199,7 @@ export default function UsersPage() {
               checked={form.active}
               onChange={(event) => setForm((prev) => ({ ...prev, active: event.target.checked }))}
             />
-            Usuario ativo
+            Usuário ativo
           </label>
 
           <div className="mt-4 flex gap-3">
@@ -201,7 +208,7 @@ export default function UsersPage() {
               disabled={saving}
               className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-brand-300"
             >
-              {saving ? "Salvando..." : editingId ? "Salvar alteracoes" : "Cadastrar usuario"}
+              {saving ? "Salvando..." : editingId ? "Salvar alterações" : "Cadastrar usuário"}
             </button>
             <button
               type="button"
@@ -222,20 +229,20 @@ export default function UsersPage() {
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">E-mail</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Perfil</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Ativo</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Acoes</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {loading ? (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-500">
-                  Carregando usuarios...
+                  Carregando usuários...
                 </td>
               </tr>
             ) : users.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-500">
-                  Nenhum usuario cadastrado.
+                  Nenhum usuário cadastrado.
                 </td>
               </tr>
             ) : (
@@ -244,7 +251,7 @@ export default function UsersPage() {
                   <td className="px-4 py-3 text-sm text-slate-700">{user.name}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{user.email}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{user.role}</td>
-                  <td className="px-4 py-3 text-sm text-slate-700">{user.active ? "Sim" : "Nao"}</td>
+                  <td className="px-4 py-3 text-sm text-slate-700">{user.active ? "Sim" : "Não"}</td>
                   <td className="px-4 py-3 text-sm">
                     <div className="flex flex-wrap gap-2">
                       <button
@@ -272,3 +279,4 @@ export default function UsersPage() {
     </>
   );
 }
+

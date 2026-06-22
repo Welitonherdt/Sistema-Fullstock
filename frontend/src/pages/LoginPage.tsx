@@ -18,7 +18,7 @@ export default function LoginPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel autenticar. Tente novamente.");
+        setError("Não foi possível autenticar. Tente novamente.");
       }
     } finally {
       setLoading(false);
@@ -32,7 +32,7 @@ export default function LoginPage() {
 
       <div className="relative w-full max-w-md rounded-3xl border border-slate-200/80 bg-white/85 p-8 shadow-[0_30px_70px_-42px_rgba(12,38,67,0.62)] backdrop-blur-xl">
         <h1 className="text-3xl font-bold text-slate-900">Entrar no sistema</h1>
-        <p className="mt-2 text-sm text-slate-600">Use os usuarios cadastrados no banco para acessar o sistema.</p>
+        <p className="mt-2 text-sm text-slate-600">Use os usuários cadastrados no banco para acessar o sistema.</p>
 
         <div className="mt-8 space-y-4">
           <div>
@@ -67,14 +67,6 @@ export default function LoginPage() {
           >
             {loading ? "Entrando..." : "Entrar"}
           </button>
-        </div>
-
-        <div className="mt-6 rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 text-xs text-slate-600">
-          <p><strong>Usuarios de teste:</strong></p>
-          <p>admin@fullstock.local (ADMIN)</p>
-          <p>almox@fullstock.com (ALMOXARIFE)</p>
-          <p>usuario@fullstock.local (USUARIO)</p>
-          <p>Senha padrao inicial: 123456</p>
         </div>
       </div>
     </div>

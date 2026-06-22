@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import Modal from "../components/ui/Modal";
 import PageHeader from "../components/ui/PageHeader";
 import { useAuth } from "../contexts/AuthContext";
@@ -94,7 +94,7 @@ export default function MovementsPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel carregar movimentacoes.");
+        setError("Não foi possível carregar movimentações.");
       }
     } finally {
       setLoading(false);
@@ -128,7 +128,7 @@ export default function MovementsPage() {
 
     const quantity = parsePositiveInteger(entryForm.quantity);
     if (quantity === null) {
-      setError("Quantidade deve ser um numero inteiro maior que zero.");
+      setError("Quantidade deve ser um número inteiro maior que zero.");
       return;
     }
 
@@ -147,7 +147,7 @@ export default function MovementsPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel registrar a entrada.");
+        setError("Não foi possível registrar a entrada.");
       }
     } finally {
       setSaving(false);
@@ -162,7 +162,7 @@ export default function MovementsPage() {
 
     const quantity = parsePositiveInteger(exitForm.quantity);
     if (quantity === null) {
-      setError("Quantidade deve ser um numero inteiro maior que zero.");
+      setError("Quantidade deve ser um número inteiro maior que zero.");
       return;
     }
 
@@ -181,7 +181,7 @@ export default function MovementsPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel registrar a saida.");
+        setError("Não foi possível registrar a saída.");
       }
     } finally {
       setSaving(false);
@@ -196,11 +196,11 @@ export default function MovementsPage() {
 
     const quantity = parsePositiveInteger(loanForm.quantity);
     if (quantity === null) {
-      setError("Quantidade deve ser um numero inteiro maior que zero.");
+      setError("Quantidade deve ser um número inteiro maior que zero.");
       return;
     }
     if (!loanForm.borrowerName.trim()) {
-      setError("Informe o nome da pessoa que pegou no emprestimo.");
+      setError("Informe o nome da pessoa que pegou no empréstimo.");
       return;
     }
 
@@ -219,7 +219,7 @@ export default function MovementsPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel registrar o emprestimo.");
+        setError("Não foi possível registrar o empréstimo.");
       }
     } finally {
       setSaving(false);
@@ -231,14 +231,14 @@ export default function MovementsPage() {
       return "Entrada";
     }
     if (type === "EXIT") {
-      return "Saida";
+      return "Saída";
     }
-    return "Emprestimo";
+    return "Empréstimo";
   }
 
   return (
     <>
-      <PageHeader title="Movimentacoes" subtitle="Entradas, saidas e emprestimos de ferramentas/pecas." />
+      <PageHeader title="Movimentações" subtitle="Entradas, saídas e empréstimos de ferramentas/peças." />
 
       {error ? (
         <div className="mb-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div>
@@ -258,23 +258,30 @@ export default function MovementsPage() {
             onClick={() => setIsExitOpen(true)}
             className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
           >
-            Nova saida
+            Nova saída
           </button>
           <button
             type="button"
             onClick={() => setIsLoanOpen(true)}
             className="rounded-xl bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700"
           >
-            Novo emprestimo
+            Novo empréstimo
           </button>
         </div>
       ) : (
         <div className="mb-6 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-800">
-          Seu perfil esta em modo visualizacao para movimentacoes.
+          Seu perfil está em modo visualização para movimentações.
         </div>
       )}
 
-      <Modal open={isEntryOpen} title="Registrar entrada" onClose={closeEntryModal}>
+      <Modal
+        open={isEntryOpen}
+        title="Registrar entrada"
+        onClose={closeEntryModal}
+        closeOnEscape={false}
+        closeOnBackdropClick={false}
+        showHeaderCloseButton={false}
+      >
         <form onSubmit={handleEntry}>
           <div className="space-y-3">
             <select
@@ -292,7 +299,7 @@ export default function MovementsPage() {
             </select>
             {selectedEntryProduct ? (
               <p className="text-xs text-slate-500">
-                Saldo atual: {selectedEntryProduct.currentQuantity} | Minimo de pecas: {selectedEntryProduct.minimumQuantity}
+                Saldo atual: {selectedEntryProduct.currentQuantity} | Mínimo de peças: {selectedEntryProduct.minimumQuantity}
               </p>
             ) : null}
             <input
@@ -314,7 +321,7 @@ export default function MovementsPage() {
             />
             <textarea
               className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-              placeholder="Observacoes (opcional)"
+              placeholder="Observações (opcional)"
               value={entryForm.notes}
               onChange={(event) => setEntryForm((prev) => ({ ...prev, notes: event.target.value }))}
               rows={2}
@@ -339,7 +346,14 @@ export default function MovementsPage() {
         </form>
       </Modal>
 
-      <Modal open={isExitOpen} title="Registrar saida" onClose={closeExitModal}>
+      <Modal
+        open={isExitOpen}
+        title="Registrar saída"
+        onClose={closeExitModal}
+        closeOnEscape={false}
+        closeOnBackdropClick={false}
+        showHeaderCloseButton={false}
+      >
         <form onSubmit={handleExit}>
           <div className="space-y-3">
             <select
@@ -357,7 +371,7 @@ export default function MovementsPage() {
             </select>
             {selectedExitProduct ? (
               <p className="text-xs text-slate-500">
-                Saldo atual: {selectedExitProduct.currentQuantity} | Minimo de pecas: {selectedExitProduct.minimumQuantity}
+                Saldo atual: {selectedExitProduct.currentQuantity} | Mínimo de peças: {selectedExitProduct.minimumQuantity}
               </p>
             ) : null}
             <input
@@ -379,7 +393,7 @@ export default function MovementsPage() {
             />
             <textarea
               className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-              placeholder="Observacoes (opcional)"
+              placeholder="Observações (opcional)"
               value={exitForm.notes}
               onChange={(event) => setExitForm((prev) => ({ ...prev, notes: event.target.value }))}
               rows={2}
@@ -390,7 +404,7 @@ export default function MovementsPage() {
                 disabled={saving}
                 className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-brand-300"
               >
-                Registrar saida
+                Registrar saída
               </button>
               <button
                 type="button"
@@ -404,7 +418,14 @@ export default function MovementsPage() {
         </form>
       </Modal>
 
-      <Modal open={isLoanOpen} title="Registrar emprestimo de ferramenta/peca" onClose={closeLoanModal}>
+      <Modal
+        open={isLoanOpen}
+        title="Registrar empréstimo de ferramenta/peça"
+        onClose={closeLoanModal}
+        closeOnEscape={false}
+        closeOnBackdropClick={false}
+        showHeaderCloseButton={false}
+      >
         <form onSubmit={handleLoan}>
           <div className="space-y-3">
             <select
@@ -422,7 +443,7 @@ export default function MovementsPage() {
             </select>
             {selectedLoanProduct ? (
               <p className="text-xs text-slate-500">
-                Saldo atual: {selectedLoanProduct.currentQuantity} | Minimo de pecas: {selectedLoanProduct.minimumQuantity}
+                Saldo atual: {selectedLoanProduct.currentQuantity} | Mínimo de peças: {selectedLoanProduct.minimumQuantity}
               </p>
             ) : null}
             <input
@@ -445,7 +466,7 @@ export default function MovementsPage() {
             />
             <textarea
               className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-              placeholder="Observacoes (opcional)"
+              placeholder="Observações (opcional)"
               value={loanForm.notes}
               onChange={(event) => setLoanForm((prev) => ({ ...prev, notes: event.target.value }))}
               rows={2}
@@ -456,7 +477,7 @@ export default function MovementsPage() {
                 disabled={saving}
                 className="rounded-xl bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:cursor-not-allowed disabled:bg-amber-300"
               >
-                Registrar emprestimo
+                Registrar empréstimo
               </button>
               <button
                 type="button"
@@ -478,7 +499,7 @@ export default function MovementsPage() {
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Produto</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Quantidade</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Quem pegou</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Responsavel</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Responsável</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Data</th>
             </tr>
           </thead>
@@ -486,13 +507,13 @@ export default function MovementsPage() {
             {loading ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-500">
-                  Carregando movimentacoes...
+                  Carregando movimentações...
                 </td>
               </tr>
             ) : movements.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-500">
-                  Nenhuma movimentacao encontrada.
+                  Nenhuma movimentação encontrada.
                 </td>
               </tr>
             ) : (
@@ -515,3 +536,4 @@ export default function MovementsPage() {
     </>
   );
 }
+

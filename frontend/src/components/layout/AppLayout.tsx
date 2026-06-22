@@ -1,5 +1,7 @@
+﻿import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { listInventory } from "../../services/api";
 
 type NavItem = {
   to: string;
@@ -9,17 +11,45 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { to: "/", label: "Dashboard", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] },
-  { to: "/users", label: "Usuarios", roles: ["ADMIN"] },
-  { to: "/locations", label: "Localizacoes", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] },
+  { to: "/users", label: "Usuários", roles: ["ADMIN"] },
+  { to: "/locations", label: "Localizações", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] },
   { to: "/products", label: "Produtos", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] },
-  { to: "/movements", label: "Movimentacoes", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] },
+  { to: "/movements", label: "Movimentações", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] },
   { to: "/inventory", label: "Estoque", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] },
-  { to: "/reports", label: "Relatorios", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] }
+  { to: "/reports", label: "Relatórios", roles: ["ADMIN", "ALMOXARIFE", "USUARIO"] }
 ];
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { logout, userName, role, email } = useAuth();
   const visibleItems = navItems.filter((item) => role && item.roles.includes(role));
+  const [criticalItemsCount, setCriticalItemsCount] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadCriticalCount() {
+      try {
+        const items = await listInventory({ criticalOnly: true, includeInactive: false });
+        if (active) {
+          setCriticalItemsCount(items.length);
+        }
+      } catch {
+        if (active) {
+          setCriticalItemsCount(0);
+        }
+      }
+    }
+
+    void loadCriticalCount();
+    const timer = window.setInterval(() => {
+      void loadCriticalCount();
+    }, 60_000);
+
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen text-slate-800">
@@ -52,7 +82,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   }`
                 }
               >
-                {item.label}
+                <span className="inline-flex items-center gap-2">
+                  {item.label}
+                  {item.to === "/inventory" && criticalItemsCount > 0 ? (
+                    <span className="inline-flex min-w-6 items-center justify-center rounded-full bg-amber-300 px-2 py-0.5 text-[11px] font-bold text-amber-950">
+                      {criticalItemsCount}
+                    </span>
+                  ) : null}
+                </span>
               </NavLink>
             ))}
           </nav>
@@ -73,3 +110,4 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+

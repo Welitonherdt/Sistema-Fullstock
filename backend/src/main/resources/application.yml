@@ -10,7 +10,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    show-sql: ${FULLSTOCK_SHOW_SQL:false}
     properties:
       hibernate:
         format_sql: true
@@ -20,7 +20,7 @@ spring:
     baseline-on-migrate: true
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 app:
   jwt:

@@ -5,10 +5,16 @@ Thumbs.db
 # Frontend
 frontend/node_modules
 frontend/dist
+frontend/tsconfig.tsbuildinfo
 
 # Backend
 backend/target
+backend/effective-pom
+backend/effective-pom.xml
 
 # Env
 .env
 *.log
+
+# Temporary files
+tempCodeRunnerFile.*

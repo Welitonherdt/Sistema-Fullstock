@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import PageHeader from "../components/ui/PageHeader";
 import {
   ApiError,
@@ -32,7 +32,7 @@ export default function ReportsPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel gerar a visualizacao do relatorio.");
+        setError("Não foi possível gerar a visualização do relatório.");
       }
     } finally {
       setLoading(false);
@@ -67,7 +67,7 @@ export default function ReportsPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel exportar o relatorio.");
+        setError("Não foi possível exportar o relatório.");
       }
     } finally {
       setExporting(false);
@@ -79,8 +79,8 @@ export default function ReportsPage() {
   return (
     <>
       <PageHeader
-        title="Relatorios de Estoque"
-        subtitle="Geracao, visualizacao e exportacao para impressao em CSV, XML e PDF."
+        title="Relatórios de Estoque"
+        subtitle="Geração, visualização e exportação para impressão em CSV, XML e PDF."
       />
 
       {error ? (
@@ -91,7 +91,7 @@ export default function ReportsPage() {
         <div className="flex flex-col gap-3 md:flex-row">
           <input
             className="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-            placeholder="Pesquisar por codigo, nome ou categoria"
+            placeholder="Pesquisar por código, nome ou categoria"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
@@ -100,7 +100,7 @@ export default function ReportsPage() {
             onClick={() => void loadReport()}
             type="button"
           >
-            Gerar visualizacao
+            Gerar visualização
           </button>
         </div>
 
@@ -111,7 +111,7 @@ export default function ReportsPage() {
               checked={criticalOnly}
               onChange={(event) => setCriticalOnly(event.target.checked)}
             />
-            Somente itens criticos
+            Somente itens críticos
           </label>
 
           <label className="inline-flex items-center gap-2 text-sm text-slate-700">
@@ -127,10 +127,10 @@ export default function ReportsPage() {
         <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Exportacao para impressao</p>
-              <h3 className="mt-1 text-lg font-bold text-slate-900">Relatorio em PDF com destaque</h3>
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Exportação para impressão</p>
+              <h3 className="mt-1 text-lg font-bold text-slate-900">Relatório em PDF com destaque</h3>
               <p className="mt-1 text-sm text-slate-600">
-                Use PDF para imprimir e CSV/XML para integracao. {hasRows ? `${rows.length} itens prontos.` : "Sem dados para exportar."}
+                Use PDF para imprimir e CSV/XML para integração. {hasRows ? `${rows.length} itens prontos.` : "Sem dados para exportar."}
               </p>
             </div>
 
@@ -172,21 +172,21 @@ export default function ReportsPage() {
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Produto</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Categoria</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Saldo</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Minimo</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Critico</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Mínimo</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Crítico</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {loading ? (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-500">
-                  Gerando relatorio...
+                  Gerando relatório...
                 </td>
               </tr>
             ) : rows.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-500">
-                  Nenhum dado para o relatorio.
+                  Nenhum dado para o relatório.
                 </td>
               </tr>
             ) : (
@@ -198,7 +198,7 @@ export default function ReportsPage() {
                   <td className="px-4 py-3 text-sm text-slate-700">{row.category || "-"}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{row.currentQuantity}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{row.minimumQuantity}</td>
-                  <td className="px-4 py-3 text-sm text-slate-700">{row.critical ? "Sim" : "Nao"}</td>
+                  <td className="px-4 py-3 text-sm text-slate-700">{row.critical ? "Sim" : "Não"}</td>
                 </tr>
               ))
             )}
@@ -208,3 +208,4 @@ export default function ReportsPage() {
     </>
   );
 }
+

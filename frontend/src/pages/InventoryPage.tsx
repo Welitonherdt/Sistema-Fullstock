@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import PageHeader from "../components/ui/PageHeader";
 import { ApiError, listInventory, type InventoryItem } from "../services/api";
 
@@ -9,6 +9,7 @@ export default function InventoryPage() {
   const [includeInactive, setIncludeInactive] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const criticalItemsCount = items.filter((item) => item.critical).length;
 
   async function loadInventory() {
     setLoading(true);
@@ -81,6 +82,12 @@ export default function InventoryPage() {
         </div>
       </div>
 
+      {!loading && criticalItemsCount > 0 ? (
+        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Aviso: {criticalItemsCount} item(ns) está(ão) no nível mínimo ou abaixo.
+        </div>
+      ) : null}
+
       <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50">
@@ -108,13 +115,16 @@ export default function InventoryPage() {
               </tr>
             ) : (
               items.map((item) => (
-                <tr key={item.productId} className="hover:bg-slate-50">
+                <tr
+                  key={item.productId}
+                  className={item.critical ? "bg-rose-50/60 hover:bg-rose-100/70" : "hover:bg-slate-50"}
+                >
                   <td className="px-4 py-3 text-sm text-slate-700">{item.code}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{item.name}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{item.category || "-"}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{item.currentQuantity}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{item.minimumQuantity}</td>
-                  <td className="px-4 py-3 text-sm text-slate-700">{item.critical ? "Sim" : "Não"}</td>
+                  <td className="px-4 py-3 text-sm font-semibold text-slate-700">{item.critical ? "Sim" : "Não"}</td>
                 </tr>
               ))
             )}
@@ -124,3 +134,4 @@ export default function InventoryPage() {
     </>
   );
 }
+

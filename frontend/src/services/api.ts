@@ -113,7 +113,15 @@ export class ApiError extends Error {
   }
 }
 
-const API_BASE_URL = "http://localhost:8080/api";
+const configuredApiUrl = import.meta.env.VITE_API_BASE_URL;
+const API_ORIGIN = configuredApiUrl === undefined
+  ? "http://localhost:8080"
+  : configuredApiUrl.replace(/\/$/, "");
+const API_BASE_URL = `${API_ORIGIN}/api`;
+
+function getApiAddress() {
+  return API_ORIGIN || window.location.origin;
+}
 
 function getToken() {
   return localStorage.getItem("fullstock_token");
@@ -143,7 +151,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     });
   } catch {
     throw new ApiError(
-      "Não foi possível conectar à API. Verifique se o backend está ativo em http://localhost:8080.",
+      `Não foi possível conectar à API em ${getApiAddress()}.`,
       0
     );
   }
@@ -378,7 +386,7 @@ export async function exportStockReport(
     });
   } catch {
     throw new ApiError(
-      "Não foi possível conectar à API. Verifique se o backend está ativo em http://localhost:8080.",
+      `Não foi possível conectar à API em ${getApiAddress()}.`,
       0
     );
   }

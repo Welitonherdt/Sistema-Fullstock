@@ -1,0 +1,28 @@
+services:
+  - type: web
+    runtime: docker
+    name: fullstock
+    plan: free
+    region: virginia
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fullstock-db
+          property: connectionString
+      - key: FULLSTOCK_JWT_SECRET
+        generateValue: true
+      - key: FULLSTOCK_ADMIN_PASSWORD
+        sync: false
+      - key: JAVA_TOOL_OPTIONS
+        value: -XX:MaxRAMPercentage=75.0
+
+databases:
+  - name: fullstock-db
+    databaseName: fullstock
+    user: fullstock
+    plan: free
+    region: virginia
+    postgresMajorVersion: "16"

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import Modal from "../components/ui/Modal";
 import PageHeader from "../components/ui/PageHeader";
 import { useAuth } from "../contexts/AuthContext";
@@ -83,7 +83,7 @@ export default function ProductsPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel carregar os produtos.");
+        setError("Não foi possível carregar os produtos.");
       }
     } finally {
       setLoading(false);
@@ -136,11 +136,11 @@ export default function ProductsPage() {
     const minimumQuantity = parseNonNegativeInteger(form.minimumQuantity);
     const locationId = Number(form.locationId);
     if (currentQuantity === null || minimumQuantity === null) {
-      setError("Saldo e quantidade minima devem ser numeros inteiros (sem quebrados).");
+      setError("Saldo e quantidade mínima devem ser números inteiros (sem quebrados).");
       return;
     }
     if (!Number.isInteger(locationId) || locationId <= 0) {
-      setError("Selecione uma localizacao valida para o produto.");
+      setError("Selecione uma localização válida para o produto.");
       return;
     }
 
@@ -171,7 +171,7 @@ export default function ProductsPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel salvar o produto.");
+        setError("Não foi possível salvar o produto.");
       }
     } finally {
       setSaving(false);
@@ -189,7 +189,7 @@ export default function ProductsPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel atualizar o status do produto.");
+        setError("Não foi possível atualizar o status do produto.");
       }
     }
   }
@@ -208,7 +208,7 @@ export default function ProductsPage() {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Nao foi possivel remover o produto.");
+        setError("Não foi possível remover o produto.");
       }
     }
   }
@@ -225,7 +225,7 @@ export default function ProductsPage() {
         <div className="flex flex-col gap-3 md:flex-row">
           <input
             className="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-            placeholder="Pesquisar por codigo, nome, categoria ou local"
+            placeholder="Pesquisar por código, nome, categoria ou local"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
@@ -262,15 +262,22 @@ export default function ProductsPage() {
 
       {!canManage ? (
         <div className="mb-6 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-800">
-          Seu perfil esta em modo visualizacao para produtos.
+          Seu perfil está em modo visualização para produtos.
         </div>
       ) : null}
 
-      <Modal open={isFormOpen} title={editingId ? "Editar produto" : "Novo produto"} onClose={closeForm}>
+      <Modal
+        open={isFormOpen}
+        title={editingId ? "Editar produto" : "Novo produto"}
+        onClose={closeForm}
+        closeOnEscape={false}
+        closeOnBackdropClick={false}
+        showHeaderCloseButton={false}
+      >
         <form onSubmit={handleSubmit}>
           <div className="grid gap-3 md:grid-cols-2">
             <label className="flex flex-col gap-1">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Codigo</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Código</span>
               <input
                 className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
                 placeholder="Ex.: PAR-002"
@@ -295,21 +302,21 @@ export default function ProductsPage() {
               <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Categoria</span>
               <input
                 className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-                placeholder="Ex.: Fixacao"
+                placeholder="Ex.: Fixação"
                 value={form.category}
                 onChange={(event) => setForm((prev) => ({ ...prev, category: event.target.value }))}
               />
             </label>
 
             <label className="flex flex-col gap-1">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Localizacao</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Localização</span>
               <select
                 className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
                 value={form.locationId}
                 onChange={(event) => setForm((prev) => ({ ...prev, locationId: event.target.value }))}
                 required
               >
-                <option value="">Selecione uma localizacao</option>
+                <option value="">Selecione uma localização</option>
                 {locations.map((location) => (
                   <option key={location.id} value={location.id}>
                     {location.code} - {location.name}
@@ -344,7 +351,7 @@ export default function ProductsPage() {
             </label>
 
             <label className="flex flex-col gap-1">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Quantidade Minima</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Quantidade Mínima</span>
               <input
                 className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
                 value={form.minimumQuantity}
@@ -359,10 +366,10 @@ export default function ProductsPage() {
           </div>
 
           <label className="mt-3 flex flex-col gap-1">
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Descricao</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Descrição</span>
             <textarea
               className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-              placeholder="Descricao do produto (opcional)"
+              placeholder="Descrição do produto (opcional)"
               value={form.description}
               onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
               rows={3}
@@ -384,7 +391,7 @@ export default function ProductsPage() {
               disabled={saving}
               className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-brand-300"
             >
-              {saving ? "Salvando..." : editingId ? "Salvar alteracoes" : "Cadastrar produto"}
+              {saving ? "Salvando..." : editingId ? "Salvar alterações" : "Cadastrar produto"}
             </button>
             <button
               type="button"
@@ -401,14 +408,14 @@ export default function ProductsPage() {
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Codigo</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Código</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nome</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Categoria</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Localizacao</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Localização</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Saldo</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Minimo</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Mínimo</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Acoes</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -434,7 +441,7 @@ export default function ProductsPage() {
                   <td className="px-4 py-3 text-sm text-slate-700">{product.currentQuantity}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">{product.minimumQuantity}</td>
                   <td className="px-4 py-3 text-sm text-slate-700">
-                    {product.active ? "Ativo" : "Inativo"} {product.critical ? "(Critico)" : ""}
+                    {product.active ? "Ativo" : "Inativo"} {product.critical ? "(Crítico)" : ""}
                   </td>
                   <td className="px-4 py-3 text-sm">
                     {canManage ? (
@@ -474,3 +481,4 @@ export default function ProductsPage() {
     </>
   );
 }
+
