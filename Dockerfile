@@ -24,4 +24,4 @@ COPY --from=backend-build /app/target/fullstock-backend-0.0.1-SNAPSHOT.jar app.j
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "if [ -n \"$DATABASE_URL\" ]; then export SPRING_DATASOURCE_URL=\"jdbc:$DATABASE_URL\"; fi; exec java -jar app.jar"]
+CMD ["sh", "-c", "if [ -n \"$DATABASE_URL\" ]; then DB_URL=\"$DATABASE_URL\"; DB_URL=\"${DB_URL#jdbc:}\"; DB_URL=\"${DB_URL/postgres:\\/\\//postgresql:\\/\\/}\"; export SPRING_DATASOURCE_URL=\"jdbc:$DB_URL\"; fi; exec java -jar app.jar"]
